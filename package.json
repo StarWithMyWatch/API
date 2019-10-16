@@ -36,6 +36,7 @@
     "d3-queue": "^3.0.7",
     "d3-tip": "^0.9.1",
     "express": "^4.16.3",
+    "heroku": "^7.33.3",
     "jsonwebtoken": "^8.2.1",
     "map-monde": "^1.0.2",
     "mongoose": "^5.4.5",
