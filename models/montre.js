@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 
 const montreSchema = mongoose.Schema({
-  prix: { type: Number, required: true },
+  nom: { type: String, required: true },
   description: { type: String, required: true },
+  prix: { type: Number, required: true },
+  image: { type: String, required: true }
   //images: { type: String }
 });
 
