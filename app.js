@@ -8,7 +8,8 @@ const userRoutes = require("./routes/user");
 
 const app = express();
 
-mongoose.connect(process.env.MONGO_URI+"/bdStar",
+mongoose.connect('mongodb://localhost:27017/bdStar',
+//mongoose.connect(process.env.MONGO_URI+"/bdStar",
     {useNewUrlParser: true, useCreateIndex: true})
     .then(() => {
       console.log("Connected to database!");

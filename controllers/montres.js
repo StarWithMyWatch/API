@@ -3,8 +3,10 @@ const Montre = require("../models/montre");
 exports.createMontre = (req, res, next) => {
   const url = req.protocol + "://" + req.get("host");
   const post = new Montre({
-    prix: req.body.prix,
+    nom: req.body.nom,
     description: req.body.description,
+    prix: req.body.prix,
+    image: req.body.image
     //images: url + "/images/" + req.file.filename,
   });
   post
