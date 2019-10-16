@@ -7,14 +7,14 @@ const extractFile = require("../middleware/file");
 
 const router = express.Router();
 
-router.post("", checkAuth, extractFile, MontreController.creatMontre);
+router.post("", /*checkAuth,*/ extractFile, MontreController.createMontre);
 
-router.put("/:id", checkAuth, extractFile, MontreController.updateMontre);
+//router.put("/:id", checkAuth, extractFile, MontreController.updateMontre);
 
 router.get("", MontreController.getMontres);
 
 router.get("/:id", MontreController.getMontre);
 
-router.delete("/:id", checkAuth, MontreController.deleteMontre);
+//router.delete("/:id", checkAuth, MontreController.deleteMontre);
 
 module.exports = router;

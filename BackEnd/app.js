@@ -8,36 +8,41 @@ const userRoutes = require("./routes/user");
 
 const app = express();
 
-mongoose
-  .connect(
-    "mongodb+srv://max:" +
-      process.env.MONGO_ATLAS_PW +
-      "@cluster0-ntrwp.mongodb.net/node-angular"
-  )
-  .then(() => {
-    console.log("Connected to database!");
-  })
-  .catch(() => {
-    console.log("Connection failed!");
-  });
+mongoose.connect('mongodb://localhost:27017/bdStar',
+    {useNewUrlParser: true, useCreateIndex: true})
+    .then(() => {
+      console.log("Connected to database!");
+    })
+    .catch(() => {
+      console.log("Connection failed!");
+    });
+var db = mongoose.connection;
+
+db.collection("nodes").countDocuments(
+    {}, // filters
+    {}, // options
+    function(error, result) {
+      console.log(result);
+    }
+);
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use("/images", express.static(path.join("backend/images")));
+
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, PUT, DELETE, OPTIONS"
+      "Access-Control-Allow-Methods",
+      "GET, POST, PATCH, PUT, DELETE, OPTIONS"
   );
   next();
 });
-
 app.use("/api/montres", montresRoutes);
 app.use("/api/user", userRoutes);
 

@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
 
 const montreSchema = mongoose.Schema({
-  prix: { type: String, required: true },
-  description: { type: String, required: true },
-  images: [String]
-  //creator: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }
+  //prix: { type: Number, required: true },
+  //description: { type: String, required: true },
+  images: { type: String }
 });
 
 module.exports = mongoose.model("Montre", montreSchema);
