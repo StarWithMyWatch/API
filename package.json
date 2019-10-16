@@ -2,9 +2,7 @@
   "name": "mean-course",
   "version": "0.0.0",
   "scripts": {
-
-    "start": "node  server.js"
-
+    "start": "node server.js"
   },
   "private": true,
   "dependencies": {
