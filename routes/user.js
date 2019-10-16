@@ -8,4 +8,9 @@ router.post("/signup", UserController.createUser);
 
 router.post("/login", UserController.userLogin);
 
+<<<<<<< HEAD
+//router.get("/", UserController.getAllUser);
+
+=======
+>>>>>>> master
 module.exports = router;
