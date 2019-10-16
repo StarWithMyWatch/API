@@ -3,9 +3,9 @@ const Montre = require("../models/montre");
 exports.createMontre = (req, res, next) => {
   const url = req.protocol + "://" + req.get("host");
   const post = new Montre({
-    //prix: req.body.prix,
-    //description: req.body.description,
-    images: url + "/images/" + req.file.filename,
+    prix: req.body.prix,
+    description: req.body.description,
+    //images: url + "/images/" + req.file.filename,
   });
   post
     .save()
