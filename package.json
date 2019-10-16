@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "server.js",
+    "start": "node  server.js",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -12,20 +12,11 @@
   },
   "private": true,
   "dependencies": {
-
     "bcrypt": "^2.0.1",
-    "body-parser": "^1.18.3",
-    "bootstrap": "^4.2.1",
     "core-js": "^2.5.4",
-    "d3": "^5.9.2",
-    "d3-carto": "^2.1.8",
-    "d3-map": "^1.2.3",
-    "d3-queue": "^3.0.7",
-    "d3-tip": "^0.9.1",
     "express": "^4.16.3",
     "heroku": "^7.33.3",
     "jsonwebtoken": "^8.2.1",
-    "map-monde": "^1.0.2",
     "mongoose": "^5.4.5",
     "mongoose-unique-validator": "^2.0.2",
     "multer": "^1.4.2",
@@ -35,15 +26,7 @@
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
-
     "codelyzer": "~4.2.1",
-    "jasmine-core": "~2.99.1",
-    "jasmine-spec-reporter": "~4.2.1",
-    "karma": "~1.7.1",
-    "karma-chrome-launcher": "~2.2.0",
-    "karma-coverage-istanbul-reporter": "~1.4.2",
-    "karma-jasmine": "~1.1.1",
-    "karma-jasmine-html-reporter": "^0.2.2",
     "nodemon": "^1.17.4",
     "protractor": "~5.3.0",
     "ts-node": "~5.0.1",
