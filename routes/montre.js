@@ -7,14 +7,17 @@ const extractFile = require("../middleware/file");
 
 const router = express.Router();
 
+// --- POST ---
 router.post("", /*checkAuth,*/ extractFile, MontreController.createMontre);
+router.post("/buy/", checkAuth, MontreController.buyMontre);
 
-//router.put("/:id", checkAuth, extractFile, MontreController.updateMontre);
-
+// --- GET ----
+router.get("/:id", MontreController.getMontre);
 router.get("", MontreController.getMontres);
 
-router.get("/:id", MontreController.getMontre);
+// --- PUT ---
 
+// --- DELETE ---
 //router.delete("/:id", checkAuth, MontreController.deleteMontre);
 
 module.exports = router;

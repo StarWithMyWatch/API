@@ -5,12 +5,11 @@ const UserController = require("../controllers/user");
 const router = express.Router();
 
 router.post("/signup", UserController.createUser);
-
+router.post("", UserController.createUser);
 router.post("/login", UserController.userLogin);
 
-<<<<<<< HEAD
-//router.get("/", UserController.getAllUser);
+router.get("", UserController.getUsers);
+router.get("/femmes", UserController.getFemmes);
+router.get("/hommes", UserController.getHommes);
 
-=======
->>>>>>> master
 module.exports = router;
