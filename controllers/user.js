@@ -7,7 +7,14 @@ exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10).then(hash => {
     const user = new User({
       email: req.body.email,
-      password: hash
+      password:hash,
+      firstNmae: req.body.firstNmae,
+      lastName: req.body.lastName,
+      type: req.body.type,
+      sex: req.body.sex,
+      ponits: req.body.ponits,
+      photo: req.body.photo,
+      codeP:req.body.codeP,
     });
     user
       .save()
@@ -17,11 +24,11 @@ exports.createUser = (req, res, next) => {
           result: result
         });
       })
-      .catch(err => {
+    /*   .catch(err => {
         res.status(500).json({
           message: "Invalid authentication credentials!"
         });
-      });
+      }); */ // TODO Décommenter et tester
   });
 }
 
@@ -60,3 +67,45 @@ exports.userLogin = (req, res, next) => {
       });
     });
 }
+
+exports.getUsers = (req, res, next) => {
+  User.find().then(documents => {
+    //Montre vient de la partie modèle de post.js module.exports = mongoose.model('Post', postSchema);
+    // console.log("documents part 1",documents);
+    res.status(200).json({
+      message: "users fetched successfully!",
+      users: documents
+
+    });
+  });
+
+};
+
+
+exports.getUsers = (req, res, next) => {
+  User.find().then(documents => {
+    //Montre vient de la partie modèle de post.js module.exports = mongoose.model('Post', postSchema);
+    // console.log("documents part 1",documents);
+    res.status(200).json({
+      message: "users fetched successfully!",
+      users: documents
+
+    });
+  });
+
+};
+
+
+/* exports.getFemmes = (req, res, next) => {
+  User.find().then(documents => {
+    //Montre vient de la partie modèle de post.js module.exports = mongoose.model('Post', postSchema);
+    // console.log("documents part 1",documents);
+    if(documents.sex="femme")
+    res.status(200).json({
+      message: "users fetched successfully!",
+      users: documents
+
+    });
+  });
+
+}; */
