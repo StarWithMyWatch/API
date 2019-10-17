@@ -21,12 +21,12 @@ exports.createMontre = (req, res, next) => {
           id: createdMontre._id
         }
       });
-    })
-    .catch(error => {
+    });
+    /* .catch(error => {
       res.status(500).json({
         message: "Creating a montre failed!"
       });
-    });
+    }); */
 };
 
 exports.getMontres = (req, res, next) => {
@@ -41,103 +41,6 @@ exports.getMontres = (req, res, next) => {
   });
  
 };
-
-exports.buyMontre = (req, res, next) => {
-  // req.body.id // ID montre
-  // req.body.code // Code Parainage
-  //
-
-  const token = req.header('Authorization');
-  console.log("token");
-  console.log(token);
-  const decoded = jwt.decode(token);
-  console.log("decoded");
-  console.log(decoded);
-
-  /*  User.findById()
-        .then(user => {
-          if (user) {
-            res.status(200).json(montre);
-          } else {
-            res.status(404).json({ message: "Montre not found!" });
-          }
-        })
-        .catch(error => {
-          res.status(500).json({
-            message: "Fetching montre failed!"
-          });
-        });
-
-  let message = "<!DOCTYPE html>" +
-      "<html>" +
-      "<t/><h3>Bonjour " + user.prenom + " " + user.nom + ", </h3><br/>" +
-      "<h4>Vous avez commandé des produits sur <a href='#'>WasteMart</a>. <br/>" +
-      "Vous trouverez ci-joint la facture de votre achat contenant les modalités de livraison de votre commande." +
-
-      "<br/><br/>" +
-      "Nous vous remercions de votre achat, et espérons vous revoir rapidement !" +
-      "<br/><br/>" +
-      "L'équipe WasteMart. " +
-      "</h4>" +
-
-
-      "</html>";
-
-  MailController.sendMail("wastemart.company@gmail.com", user.mail, "Votre commande du " + day + "/" + month + "/" + date[0], message, 'factures/facture_cmd_' + idCommande + '.pdf');
-
-
-  const put = new Montre({
-    nom: req.body.nom,
-    description: req.body.desc,
-    prix: req.body.prix,
-    image: req.body.image
-    //images: url + "/images/" + req.file.filename,
-  });
-  put
-      .save()
-      .then(createdMontre => {
-        res.status(201).json({
-          message: "Post added successfully",
-          post: {
-            ...createdMontre,
-            id: createdMontre._id
-          }
-        });
-      })
-      .catch(error => {
-        res.status(500).json({
-          message: "Creating a montre failed!"
-        });
-      });*/
-}
-
-
-/* exports.getPosts = (req, res, next) => {
-  const pageSize = +req.query.pagesize;
-  const currentPage = +req.query.page;
-  const postQuery = Post.find();
-  let fetchedPosts;
-  if (pageSize && currentPage) {
-    postQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
-  }
-  postQuery
-    .then(documents => {
-      fetchedPosts = documents;
-      return Post.count();
-    })
-    .then(count => {
-      res.status(200).json({
-        message: "Posts fetched successfully!",
-        posts: fetchedPosts,
-        maxPosts: count
-      });
-    })
-    .catch(error => {
-      res.status(500).json({
-        message: "Fetching posts failed!"
-      });
-    });
-}; */
 
 exports.getMontre = (req, res, next) => {
   Montre.findById(req.params.id)

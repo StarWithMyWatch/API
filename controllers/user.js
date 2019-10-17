@@ -5,9 +5,11 @@ const BASEAPPURL = process.env.BASEAPPURL || 'http://localhost:3000/';
 
 const User = require("../models/user");
 const Concours = require("../models/concours");
+const MailController = require('./mail');
 
 exports.createUser = (req, res, next) => {
     bcrypt.hash(req.body.password, 10).then(hash => {
+
         const user = new User({
             email: req.body.email,
             password: hash,
@@ -17,7 +19,10 @@ exports.createUser = (req, res, next) => {
             sex: req.body.sex,
             points: 0,
             photo: null,
-            codeP: {"code": null, "nbInvitation": 0}
+            codeP: {
+                "code": null,
+                "nbInvitation": 0
+            }
         });
         user.save()
             .then(newUser => {
@@ -26,13 +31,15 @@ exports.createUser = (req, res, next) => {
                     result: newUser
                 });
             })
-            .catch(err => {
-                res.status(500).json({
-                    message: "Internal error during user creation!"
-                });
+        /*   .catch(err => {
+            res.status(500).json({
+              message: "Internal error during user creation!"
             });
+
+          }); */
     });
-};
+}
+
 
 exports.userLogin = (req, res, next) => {
     let fetchedUser;
@@ -52,10 +59,13 @@ exports.userLogin = (req, res, next) => {
                     message: "Auth failed"
                 });
             }
-            const token = jwt.sign(
-                {email: fetchedUser.email, userId: fetchedUser._id},
-                "SE56AR4T98ER49TGR495H8G4F98H584ZH5E6R",
-                {expiresIn: "1h"}
+            const token = jwt.sign({
+                    email: fetchedUser.email,
+                    userId: fetchedUser._id
+                },
+                "SE56AR4T98ER49TGR495H8G4F98H584ZH5E6R", {
+                    expiresIn: "1h"
+                }
             );
             res.status(200).json({
                 token: token,
@@ -69,6 +79,7 @@ exports.userLogin = (req, res, next) => {
         });
 }
 
+
 exports.getUsers = (req, res, next) => {
     User.find().then(users => {
         //Montre vient de la partie modèle de post.js module.exports = mongoose.model('Post', postSchema);
@@ -77,12 +88,25 @@ exports.getUsers = (req, res, next) => {
             message: "users fetched successfully!",
             users: users
         });
-    })
-        .catch(err => {
-            return res.status(500).json({
-                message: "Could not fetch user list!"
-            });
+      });
+    };
+
+exports.getUserById = (req, res, next) => {
+  User.findById(req.params.id)
+    .then(user => {
+      if (user) {
+        res.status(200).json(user);
+      } else {
+        res.status(404).json({
+          message: "user not found!"
         });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: "Fetching user failed!"
+      });
+    });
 };
 
 exports.getFemmes = (req, res, next) => {
