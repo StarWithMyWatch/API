@@ -9,7 +9,7 @@ const userRoutes = require("./routes/user");
 const app = express();
 
 mongoose.connect((process.env.MONGO_URI || 'mongodb://localhost:27017') + "/bdStar",
-    {useNewUrlParser: true, useCreateIndex: true})
+    {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true })
     .then(() => {
       console.log("Connected to database!");
     })
@@ -44,6 +44,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use("/api/montres", montresRoutes);
-app.use("/api/user", userRoutes);
+app.use("/api/user", userRoutes); //http://localhost:3000/api/user/signup'
+//http://localhost:3000/api/user/login 
 
 module.exports = app;
