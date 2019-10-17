@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const BASEAPPURL = process.env.BASEAPPURL || 'http://localhost:3000/';
+
 const User = require("../models/user");
 
 exports.createUser = (req, res, next) => {
@@ -126,13 +128,11 @@ exports.getHommes = (req, res, next) => {
 };
 
 exports.setImageToUser = (req, res, next) => {
-  console.log(req.body.id);
-  console.log(req.body.image);
         User.updateOne(
             {_id: req.body.id},
             {
               $set: {
-                "photo" : req.body.image
+                "photo" : BASEAPPURL + req.file.path,
               }
             }).then(user => {
           res.send({
