@@ -117,7 +117,8 @@ exports.getFemmes = (req, res, next) => {
                 //photosfemmes = user[i].photo
                 photosF = {
                     id: user[i]._id,
-                    photo: user[i].photo,
+                    email: user[i].email,
+                    photo: user[i].photo
                 };
                 photosfemmes.push(photosF);
                 console.log("documents part 1", photosfemmes);
@@ -139,7 +140,8 @@ exports.getHommes = (req, res, next) => {
                 console.log("yees papaye : " + user[i].email + " : " + user[i]._id);
                 photosH = {
                     id: user[i]._id,
-                    photo: user[i].photo,
+                    email: user[i].email,
+                    photo: user[i].photo
                 };
                 photoshommes.push(photosH);
                 //console.log("documents part 1", photoshommes);
