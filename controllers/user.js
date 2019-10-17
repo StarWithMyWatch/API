@@ -1,8 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
 const User = require("../models/user");
-
+const MailController = require('./mail');
 
 exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10).then(hash => {
@@ -159,20 +158,21 @@ exports.updatePointWhenBuy = (req, res, next) => {
     json: true
   });
   console.log("token", token);
-  console.log("payload", payload);
+  console.log("userId", payload.userId);
+  console.log("email", payload.email);
 
 
-/*   //Achat sans code
+  //Achat sans code
   if (!req.body.codeP) {
 
     User.updateOne({
-      _id: req.body._id // id de celui qui a achté la montre
+      _id: payload.userId // id de celui qui a achté la montre
     }, {
       $inc: {
         "points": 5
       },
       $set: {
-        "codeP": "SW" + req.body._id + "MW" // lui donner un code "req.body._id replace with mail"
+        "codeP": "SW" + payload.email + "MW" // lui donner un code "req.body._id replace with mail"
       }
     }).then(result => {
       if (result.nModified > 0) {
@@ -210,14 +210,14 @@ exports.updatePointWhenBuy = (req, res, next) => {
 
     // update second user qui a utiliser le code du parain  
     User.updateOne({
-      _id: req.body._id, // id de l'utilisateur qui vient d'achter la montre avec un code
+      _id: payload.userId, // id de l'utilisateur qui vient d'achter la montre avec un code
     }, {
       $inc: {
         "points": 5
       },
       $set: {
         "codeP": {
-          "code": "SW" + req.body._id + "MW",
+          "code": "SW" + payload.email + "MW",
           "nbInvitation": 0
         } // req.body._id replace with mail dans le token
       }
@@ -236,30 +236,29 @@ exports.updatePointWhenBuy = (req, res, next) => {
 
 
   }
- */
+
 
 };
 
 
 
-
+// update star user
 exports.updateUserPointAfeterSelectStar = (req, res, next) => {
-  let token = req.header('Authorization').split(" ")[1];
-  let payload = jwt.decode(token, {
-    json: true
-  });
-  console.log("token", token);
-  console.log("payload", payload);
-  
+  //for id 1
 
-//for id 1
+ /*  db.scores.findOneAndUpdate(
+    { "name" : "R. Stiles" },
+    { $inc: { "points" : 5 } }
+ ) */
+
   User.updateOne({
-    _id: req.body._id1 // id de celui qui a achté la montre
+    _id: req.body.idMenOne // id de celui qui a achté la montre
   }, {
     $inc: {
       "points": 5
     }
   }).then(result => {
+    console.log("result.nModified",result.nModified)
     if (result.nModified > 0) {
       res.status(200).json({
         message: "Update successful!",
@@ -271,9 +270,9 @@ exports.updateUserPointAfeterSelectStar = (req, res, next) => {
       });
     }
   });
-//for  id 2
+ /*  //for  id 2
   User.updateOne({
-    _id: req.body._id2 // id de celui qui a achté la montre
+    _id: req.body.idMenTwo // id de celui qui a achté la montre
   }, {
     $inc: {
       "points": 5
@@ -293,7 +292,7 @@ exports.updateUserPointAfeterSelectStar = (req, res, next) => {
 
   //for  id 3
   User.updateOne({
-    _id: req.body._id3 // id de celui qui a achté la montre
+    _id: req.body.idWomenOne// id de celui qui a achté la montre
   }, {
     $inc: {
       "points": 5
@@ -312,7 +311,7 @@ exports.updateUserPointAfeterSelectStar = (req, res, next) => {
   });
   //for  id 4
   User.updateOne({
-    _id: req.body._id4 // id de celui qui a achté la montre
+    _id: req.body.idWomenTow // id de celui qui a achté la montre
   }, {
     $inc: {
       "points": 5
@@ -329,13 +328,14 @@ exports.updateUserPointAfeterSelectStar = (req, res, next) => {
       });
     }
   });
-
+ */
 };
 
 
 
 
-
+/* MailController.sendMail("starmywatch@gmail.com", 
+req.body.dest, req.body.subject, req.body.message); */
 
 
 

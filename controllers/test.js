@@ -1,4 +1,4 @@
-WatchService.default.getPhotosMan { (photosMen) in
+/* WatchService.default.getPhotosMan { (photosMen) in
     WatchService.default.getPhotosWoman(completion: { (photosWomen) in
         let next = AdminHomeViewController.newInstance(usersMan : photosMen, usersWoman : photosWomen)
         self.navigationController?.pushViewController(next, animated: true)
@@ -57,4 +57,19 @@ if (resultForEach === 0) {
 res.send({error: err});
 }
 client.close();
-});
+}); */
+
+
+const user = new User({
+    email: req.body.email,
+    password: hash,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    type: "user",
+    sex: req.body.sex,
+    points: 0,
+    photo: null,
+    codeP: {"code":null,"nbInvitation":0}
+  });
+  
+  findOneAndUpdate
