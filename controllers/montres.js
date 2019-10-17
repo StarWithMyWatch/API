@@ -1,10 +1,10 @@
 const Montre = require("../models/montre");
 
 exports.createMontre = (req, res, next) => {
-  const url = req.protocol + "://" + req.get("host");
+  //const url = req.protocol + "://" + req.get("host");
   const post = new Montre({
     nom: req.body.nom,
-    description: req.body.description,
+    description: req.body.desc,
     prix: req.body.prix,
     image: req.body.image
     //images: url + "/images/" + req.file.filename,
@@ -19,12 +19,12 @@ exports.createMontre = (req, res, next) => {
           id: createdMontre._id
         }
       });
-    })
-    .catch(error => {
+    });
+    /* .catch(error => {
       res.status(500).json({
         message: "Creating a montre failed!"
       });
-    });
+    }); */
 };
 
 
@@ -41,34 +41,6 @@ exports.getMontres = (req, res, next) => {
   });
  
 };
-
-
-/* exports.getPosts = (req, res, next) => {
-  const pageSize = +req.query.pagesize;
-  const currentPage = +req.query.page;
-  const postQuery = Post.find();
-  let fetchedPosts;
-  if (pageSize && currentPage) {
-    postQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
-  }
-  postQuery
-    .then(documents => {
-      fetchedPosts = documents;
-      return Post.count();
-    })
-    .then(count => {
-      res.status(200).json({
-        message: "Posts fetched successfully!",
-        posts: fetchedPosts,
-        maxPosts: count
-      });
-    })
-    .catch(error => {
-      res.status(500).json({
-        message: "Fetching posts failed!"
-      });
-    });
-}; */
 
 exports.getMontre = (req, res, next) => {
   Montre.findById(req.params.id)
