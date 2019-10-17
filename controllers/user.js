@@ -10,11 +10,11 @@ exports.createUser = (req, res, next) => {
         password:hash,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        type: req.body.type,
+        type: "user",
         sex: req.body.sex,
-        points: req.body.points,
-        photo: req.body.photo,
-        codeP:req.body.codeP,
+        points: 0,
+        photo: null,
+        codeP: {"code": null,"nbInvitation":0}
       });
       user.save()
       .then(newUser => {
