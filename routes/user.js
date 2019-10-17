@@ -15,8 +15,11 @@ router.get("/hommes", UserController.getHommes);
 
 router.get("/:id", UserController.getUserById);
 
+//paiment avec l'argent {avec code et sans code} 
 router.put("/paidWithMany", UserController.updatePointWhenBuy);
-router.put("/getPointsByCode", UserController.updatePointByCode);
+
+
+router.put("/star", UserController.updateUserPointAfeterSelectStar);
 
 
 

@@ -6,17 +6,22 @@ const User = require("../models/user");
 
 exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10).then(hash => {
+
     const user = new User({
       email: req.body.email,
       password: hash,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
-      type: req.body.type,
+      type: "user",
       sex: req.body.sex,
-      points: req.body.points,
-      photo: req.body.photo,
-      codeP: req.body.codeP,
+      points: 0,
+      photo: null,
+      codeP: {
+        "code": null,
+        "nbInvitation": 0
+      }
     });
+
     user
       .save()
       .then(result => {
@@ -35,14 +40,11 @@ exports.createUser = (req, res, next) => {
 
 exports.userLogin = (req, res, next) => {
   let fetchedUser;
-  console.log("début")
   User.findOne({
       email: req.body.email
     })
     .then(user => {
-      console.log("user", user);
       if (!user) {
-        console.log("Auth failed 1");
         return res.status(401).json({
           message: "Auth failed"
         });
@@ -51,9 +53,7 @@ exports.userLogin = (req, res, next) => {
       return bcrypt.compare(req.body.password, user.password);
     })
     .then(result => {
-      console.log("Auth failed 2");
       if (!result) {
-        console.log("Auth failed 2");
         return res.status(401).json({
           message: "Auth failed"
         });
@@ -62,16 +62,14 @@ exports.userLogin = (req, res, next) => {
           email: fetchedUser.email,
           userId: fetchedUser._id
         },
-        process.env.JWT_KEY, {
-          expiresIn: "12h"
+        "SE56AR4T98ER49TGR495H8G4F98H584ZH5E6R", {
+          expiresIn: "1h"
         }
       );
       res.status(200).json({
         token: token,
-        expiresIn: 43200,
-        userId: fetchedUser._id
+        user: fetchedUser
       });
-      console.log("token", token);
     })
     .catch(err => {
       return res.status(401).json({
@@ -79,6 +77,7 @@ exports.userLogin = (req, res, next) => {
       });
     });
 }
+
 
 exports.getUsers = (req, res, next) => {
   User.find().then(documents => {
@@ -90,7 +89,6 @@ exports.getUsers = (req, res, next) => {
     });
   });
 };
-
 
 exports.getUserById = (req, res, next) => {
   User.findById(req.params.id)
@@ -155,15 +153,111 @@ exports.getHommes = (req, res, next) => {
 
 // by with many ==> take a points 5 || j'attends le découdage du token
 //le cahmp de code est vide donc on va ajouter un code||ok
-exports.updatePointWhenBuy = (req, res, next) => { 
+exports.updatePointWhenBuy = (req, res, next) => {
+  let token = req.header('Authorization').split(" ")[1];
+  let payload = jwt.decode(token, {
+    json: true
+  });
+  console.log("token", token);
+  console.log("payload", payload);
+
+
+/*   //Achat sans code
+  if (!req.body.codeP) {
+
+    User.updateOne({
+      _id: req.body._id // id de celui qui a achté la montre
+    }, {
+      $inc: {
+        "points": 5
+      },
+      $set: {
+        "codeP": "SW" + req.body._id + "MW" // lui donner un code "req.body._id replace with mail"
+      }
+    }).then(result => {
+      if (result.nModified > 0) {
+        res.status(200).json({
+          message: "Update successful!",
+          result: result
+        });
+      } else {
+        res.status(401).json({
+          message: "Not authorized!"
+        });
+      }
+    });
+
+  } //Achat avec code
+  else {
+    User.updateOne({
+      codeP: req.body.codeP, //utilisation de code
+    }, {
+      $inc: {
+        "points": 10
+      }
+    }).then(result => {
+      if (result.nModified > 0) {
+        res.status(200).json({
+          message: "Update successful!",
+          result: result
+        });
+      } else {
+        res.status(401).json({
+          message: "Not authorized!"
+        });
+      }
+    });
+
+    // update second user qui a utiliser le code du parain  
+    User.updateOne({
+      _id: req.body._id, // id de l'utilisateur qui vient d'achter la montre avec un code
+    }, {
+      $inc: {
+        "points": 5
+      },
+      $set: {
+        "codeP": {
+          "code": "SW" + req.body._id + "MW",
+          "nbInvitation": 0
+        } // req.body._id replace with mail dans le token
+      }
+    }).then(result => {
+      if (result.nModified > 0) {
+        res.status(200).json({
+          message: "Update successful!",
+          result: result
+        });
+      } else {
+        res.status(401).json({
+          message: "Not authorized!"
+        });
+      }
+    });
+
+
+  }
+ */
+
+};
+
+
+
+
+exports.updateUserPointAfeterSelectStar = (req, res, next) => {
+  let token = req.header('Authorization').split(" ")[1];
+  let payload = jwt.decode(token, {
+    json: true
+  });
+  console.log("token", token);
+  console.log("payload", payload);
+  
+
+//for id 1
   User.updateOne({
-    _id: req.body._id
+    _id: req.body._id1 // id de celui qui a achté la montre
   }, {
     $inc: {
       "points": 5
-    },
-    $set: {
-      "codeP": "SW" + req.body._id + "MW" // req.body._id replace with mail
     }
   }).then(result => {
     if (result.nModified > 0) {
@@ -177,18 +271,12 @@ exports.updatePointWhenBuy = (req, res, next) => {
       });
     }
   });
-};
-
-
-//get 10 point thanks to the code user
-exports.updatePointByCode = (req, res, next) => {
-  
-// update first user qui a fait le paraignage 
+//for  id 2
   User.updateOne({
-    codeP: req.body.codeP, 
+    _id: req.body._id2 // id de celui qui a achté la montre
   }, {
     $inc: {
-      "points": 10
+      "points": 5
     }
   }).then(result => {
     if (result.nModified > 0) {
@@ -203,30 +291,64 @@ exports.updatePointByCode = (req, res, next) => {
     }
   });
 
-// update second user qui a utiliser le code du parain  
-User.updateOne({
-  _id: req.body._id, 
-}, {
-  $inc: {
-    "points": 5
-  },
-  $set: {
-    "codeP": "SW" + req.body._id + "MW" // req.body._id replace with mail dans le token
-  }
-}).then(result => {
-  if (result.nModified > 0) {
-    res.status(200).json({
-      message: "Update successful!",
-      result: result
-    });
-  } else {
-    res.status(401).json({
-      message: "Not authorized!"
-    });
-  }
-});
+  //for  id 3
+  User.updateOne({
+    _id: req.body._id3 // id de celui qui a achté la montre
+  }, {
+    $inc: {
+      "points": 5
+    }
+  }).then(result => {
+    if (result.nModified > 0) {
+      res.status(200).json({
+        message: "Update successful!",
+        result: result
+      });
+    } else {
+      res.status(401).json({
+        message: "Not authorized!"
+      });
+    }
+  });
+  //for  id 4
+  User.updateOne({
+    _id: req.body._id4 // id de celui qui a achté la montre
+  }, {
+    $inc: {
+      "points": 5
+    }
+  }).then(result => {
+    if (result.nModified > 0) {
+      res.status(200).json({
+        message: "Update successful!",
+        result: result
+      });
+    } else {
+      res.status(401).json({
+        message: "Not authorized!"
+      });
+    }
+  });
 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -259,3 +381,54 @@ User.updateOne({
     photo: req.body.photo,
     codeP: req.body.codeP,
   }; */
+
+
+
+//get 10 point thanks to the code user
+/* exports.updatePointByCode = (req, res, next) => {
+
+  // update first user qui a fait le paraignage 
+  User.updateOne({
+    codeP: req.body.codeP,
+  }, {
+    $inc: {
+      "points": 10
+    }
+  }).then(result => {
+    if (result.nModified > 0) {
+      res.status(200).json({
+        message: "Update successful!",
+        result: result
+      });
+    } else {
+      res.status(401).json({
+        message: "Not authorized!"
+      });
+    }
+  });
+
+  // update second user qui a utiliser le code du parain  
+  User.updateOne({
+    _id: req.body._id,
+  }, {
+    $inc: {
+      "points": 5
+    },
+    $set: {
+      "codeP": "SW" + req.body._id + "MW" // req.body._id replace with mail dans le token
+    }
+  }).then(result => {
+    if (result.nModified > 0) {
+      res.status(200).json({
+        message: "Update successful!",
+        result: result
+      });
+    } else {
+      res.status(401).json({
+        message: "Not authorized!"
+      });
+    }
+  });
+
+};
+ */
