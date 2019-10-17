@@ -1,5 +1,6 @@
 const Montre = require("../models/montre");
 const MailController = require('./mail');
+const jwt = require("jsonwebtoken");
 
 exports.createMontre = (req, res, next) => {
   //const url = req.protocol + "://" + req.get("host");
@@ -45,7 +46,14 @@ exports.buyMontre = (req, res, next) => {
   // req.body.id // ID montre
   // req.body.code // Code Parainage
   //
-  console.log(req.header('x-access-token'));
+
+  const token = req.header('Authorization');
+  console.log("token");
+  console.log(token);
+  const decoded = jwt.decode(token);
+  console.log("decoded");
+  console.log(decoded);
+
   /*  User.findById()
         .then(user => {
           if (user) {
