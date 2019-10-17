@@ -42,6 +42,23 @@ exports.getMontres = (req, res, next) => {
 };
 
 exports.buyMontre = (req, res, next) => {
+  // req.body.id // ID montre
+  // req.body.code // Code Parainage
+  //
+  console.log(req.header('x-access-token'));
+  /*  User.findById()
+        .then(user => {
+          if (user) {
+            res.status(200).json(montre);
+          } else {
+            res.status(404).json({ message: "Montre not found!" });
+          }
+        })
+        .catch(error => {
+          res.status(500).json({
+            message: "Fetching montre failed!"
+          });
+        });
 
   let message = "<!DOCTYPE html>" +
       "<html>" +
@@ -83,7 +100,7 @@ exports.buyMontre = (req, res, next) => {
         res.status(500).json({
           message: "Creating a montre failed!"
         });
-      });
+      });*/
 }
 
 
@@ -146,8 +163,6 @@ exports.getMontre = (req, res, next) => {
       });
     });
 }; */
-
-
 
 /* exports.updateMontre = (req, res, next) => {
   let imagePath = req.body.imagePath;
