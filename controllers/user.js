@@ -89,7 +89,7 @@ exports.getFemmes = (req, res, next) => {
     let photosfemmes = [];
     User.find().then(user => {
         for (let i = 0; i < user.length; i++) {
-            if (user[i].sex === "femme" && user[i].type === "user") {
+            if (user[i].sex === "femme" && user[i].type === "user" && (user[i].photo || user[i].photo)) {
                 //photosfemmes = user[i].photo
                 photosF = {
                     id: user[i]._id,
@@ -111,13 +111,14 @@ exports.getHommes = (req, res, next) => {
     let photoshommes = [];
     User.find().then(user => {
         for (let i = 0; i < user.length; i++) {
-            if (user[i].sex === "homme" && user[i].type === "user") {
+            if (user[i].sex === "homme" && user[i].type === "user" && (user[i].photo || user[i].photo)) {
+                console.log("yees papaye : " + user[i].email + " : " + user[i]._id);
                 photosH = {
                     id: user[i]._id,
                     photo: user[i].photo,
                 };
                 photoshommes.push(photosH);
-                console.log("documents part 1", photoshommes);
+                //console.log("documents part 1", photoshommes);
             }
         }
         res.status(200).json({
