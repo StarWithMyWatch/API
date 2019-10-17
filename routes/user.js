@@ -6,6 +6,7 @@ const router = express.Router();
 // --- POST ---
 router.post("/signup", UserController.createUser);
 router.post("/login", UserController.userLogin);
+router.put("/imageSet", UserController.setImageToUser);
 
 // --- GET ----
 router.get("", UserController.getUsers);

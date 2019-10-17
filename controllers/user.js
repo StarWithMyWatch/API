@@ -124,3 +124,26 @@ exports.getHommes = (req, res, next) => {
     });
   });
 };
+
+exports.setImageToUser = (req, res, next) => {
+  console.log(req.body.id);
+  console.log(req.body.image);
+        User.updateOne(
+            {_id: req.body.id},
+            {
+              $set: {
+                "photo" : req.body.image
+              }
+            }).then(user => {
+          res.send({
+            user: user,
+            error: null
+          });
+        }).catch(err => {
+          res.send({
+            id: req.body.id,
+            error: err
+          });
+        })
+
+};
