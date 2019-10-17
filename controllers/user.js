@@ -296,6 +296,23 @@ exports.updateUserPointAfeterSelectStar = (req, res, next) => {
        { "name" : "R. Stiles" },
        { $inc: { "points" : 5 } }
     ) */
+    const subject = "Concours photo";
+    const message = "vous êtes sélectionnés pour participer à la réalisation de nos spots publicitaires "
+    console.log("req.body.email ", req.body.emailOneMen);
+    console.log("req.body.email ", req.body.idMenOne);
+
+    //send mail to menOne
+    MailController.sendMail("starmywatch@gmail.com",
+        req.body.emailOneMen, subject, message);
+    //send mail to OneWomen
+    MailController.sendMail("starmywatch@gmail.com",
+        req.body.emailOneWomen, subject, message);
+    //send mail to towWomen
+    MailController.sendMail("starmywatch@gmail.com",
+        req.body.emailTowWomen, subject, message);
+    //send mail to menTow,
+    MailController.sendMail("starmywatch@gmail.com",
+        req.body.emailTowMen, subject, message);
 
     User.updateOne({
         _id: req.body.idMenOne // id de celui qui a achté la montre
