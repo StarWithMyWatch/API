@@ -8,7 +8,7 @@ const router = express.Router();
 router.post("/signup", UserController.createUser);
 router.post("/login", UserController.userLogin);
 router.put("/imageSet", extractFile, UserController.setImageToUser);
-
+router.post("/concours", UserController.finishConcours)
 // --- GET ----
 router.get("", UserController.getUsers);
 router.get("/femmes", UserController.getFemmes);
