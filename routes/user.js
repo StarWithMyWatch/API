@@ -16,8 +16,34 @@ router.get("/hommes", UserController.getHommes);
 router.get("/:id", UserController.getUserById);
 
 router.put("/paidWithMany", UserController.updatePointWhenBuy);
-
 router.put("/getPointsByCode", UserController.updatePointByCode);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

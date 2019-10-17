@@ -153,30 +153,23 @@ exports.getHommes = (req, res, next) => {
   });
 };
 
-// by with many ==> take a points 
-exports.updatePointWhenBuy = (req, res, next) => {
-  const user = {
-    _id: req.body._id,
-    email: req.body.email,
-    password: req.body.password,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    type: req.body.type,
-    sex: req.body.sex,
-    points: req.body.points,
-    photo: req.body.photo,
-    codeP: req.body.codeP,
-  };
-  console.log("req.params.id", req.body._id);
-  console.log("user", user);
+// by with many ==> take a points 5 || j'attends le découdage du token
+//le cahmp de code est vide donc on va ajouter un code||ok
+exports.updatePointWhenBuy = (req, res, next) => { 
   User.updateOne({
-      _id: req.body._id,
+    _id: req.body._id
+  }, {
+    $inc: {
+      "points": 5
     },
-    user
-  ).then(result => {
+    $set: {
+      "codeP": "SW" + req.body._id + "MW" // req.body._id replace with mail
+    }
+  }).then(result => {
     if (result.nModified > 0) {
       res.status(200).json({
-        message: "Update successful!"
+        message: "Update successful!",
+        result: result
       });
     } else {
       res.status(401).json({
@@ -186,23 +179,63 @@ exports.updatePointWhenBuy = (req, res, next) => {
   });
 };
 
+
+//get 10 point thanks to the code user
 exports.updatePointByCode = (req, res, next) => {
-  const user = {
-    _id: req.body._id,
-    codeP: req.body.codeP,
-  };
-
-
-
-
-
-
-
   
-  User.findById(req.params.id)
+// update first user qui a fait le paraignage 
+  User.updateOne({
+    codeP: req.body.codeP, 
+  }, {
+    $inc: {
+      "points": 10
+    }
+  }).then(result => {
+    if (result.nModified > 0) {
+      res.status(200).json({
+        message: "Update successful!",
+        result: result
+      });
+    } else {
+      res.status(401).json({
+        message: "Not authorized!"
+      });
+    }
+  });
+
+// update second user qui a utiliser le code du parain  
+User.updateOne({
+  _id: req.body._id, 
+}, {
+  $inc: {
+    "points": 5
+  },
+  $set: {
+    "codeP": "SW" + req.body._id + "MW" // req.body._id replace with mail dans le token
+  }
+}).then(result => {
+  if (result.nModified > 0) {
+    res.status(200).json({
+      message: "Update successful!",
+      result: result
+    });
+  } else {
+    res.status(401).json({
+      message: "Not authorized!"
+    });
+  }
+});
+
+};
+
+
+
+/* console.log("req",req);
+  User.findById("5da8512a02430213208eb2e6")
     .then(user => {
       if (user) {
         res.status(200).json(user);
+        //console.log("oneUser",user);
       } else {
         res.status(404).json({
           message: "user not found!"
@@ -213,24 +246,16 @@ exports.updatePointByCode = (req, res, next) => {
       res.status(500).json({
         message: "Fetching user failed!"
       });
-    });
-
-
-  console.log("req.params.id", req.body._id);
-  console.log("user", user);
-  User.updateOne({
-      _id: req.body._id,
-    },
-    user
-  ).then(result => {
-    if (result.nModified > 0) {
-      res.status(200).json({
-        message: "Update successful!"
-      });
-    } else {
-      res.status(401).json({
-        message: "Not authorized!"
-      });
-    }
-  });
-};
+    }); */
+/*   const user = {
+    _id: req.body._id,
+    email: req.body.email,
+    password: req.body.password,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    type: req.body.type,
+    sex: req.body.sex,
+    points: req.body.points,
+    photo: req.body.photo,
+    codeP: req.body.codeP,
+  }; */
