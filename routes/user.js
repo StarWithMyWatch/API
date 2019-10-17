@@ -15,7 +15,7 @@ router.get("/hommes", UserController.getHommes);
 router.get("/:id", UserController.getUserById);
 
 // --- PUT ---
-router.put("/imageSet", UserController.setImageToUser);
+router.put("/imageSet", extractFile, UserController.setImageToUser);
 
 //paiment avec l'argent {avec code et sans code}
 router.put("/paidWithMany", UserController.updatePointWhenBuy);
