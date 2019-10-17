@@ -9,7 +9,6 @@ const router = express.Router();
 
 // --- POST ---
 router.post("", /*checkAuth,*/ extractFile, MontreController.createMontre);
-router.post("/buy", checkAuth, MontreController.buyMontre);
 
 // --- GET ----
 router.get("/:id", MontreController.getMontre);
