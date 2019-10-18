@@ -162,9 +162,9 @@ exports.updatePointWhenBuy = (req, res, next) => {
    console.log("email", payload.email); */
   const subject = "Votre Code d'achat";
   const message = "vous trouvrez ci-dessous un code à partager à fin de ganer des points ....." + "SW" + req.body.email + "MW";
-  console.log("req.body.codeP", req.body.codeP.code);
+  console.log("req.body.codeP", req.body.code);
   //Achat sans code
-  if (req.body.codeP.code === "") {
+  if (req.body.code === "") {
 
     User.updateOne({
       email: req.body.email // id de celui qui a achté la montre
@@ -173,7 +173,7 @@ exports.updatePointWhenBuy = (req, res, next) => {
         "points": 5
       },
       $set: {
-        "codeP": "SW" + req.body.email + "MW" // lui donner un code "req.body._id replace with mail"
+        "codeP": "test" + req.body.email + "MW" // lui donner un code "req.body._id replace with mail"
       }
     }).then(result => {
       if (result.nModified > 0) {
@@ -200,7 +200,7 @@ exports.updatePointWhenBuy = (req, res, next) => {
   //Achat avec code
   else {
     User.updateOne({
-      codeP: req.body.codeP, //utilisation de code
+      codeP: req.body.code, //utilisation de code
     }, {
       $inc: {
         "points": 10
@@ -255,23 +255,20 @@ exports.updatePointWhenBuy = (req, res, next) => {
 
 };
 
-
-
-
 //*******/ by with Points ==> -100pts*********//
 exports.updatePointWhenPoints = (req, res, next) => {
-  let token = req.header('Authorization').split(" ")[1];
-  let payload = jwt.decode(token, {
-    json: true
-  });
-  console.log("token", token);
-  console.log("userId", payload.userId);
-  console.log("email", payload.email);
+  /*   let token = req.header('Authorization').split(" ")[1];
+    let payload = jwt.decode(token, {
+      json: true
+    });
+    console.log("token", token);
+    console.log("userId", payload.userId);
+    console.log("email", payload.email); */
   const subject = "Votre Code d'achat";
-  const message = "vous trouvrez ci-dessous un code à partager à fin de ganer des points ....." + "SW" + payload.email + "MW";
+  const message = "vous trouvrez ci-dessous un code à partager à fin de ganer des points ....." + "SW" + req.body.email + "MW";
 
   User.updateOne({
-    _id: payload.userId // id de celui qui a achté la montre
+    email: req.body.email // id de celui qui a achté la montre
   }, {
     $inc: {
       "points": -100
@@ -290,7 +287,7 @@ exports.updatePointWhenPoints = (req, res, next) => {
   });
   //send mail with code 
   MailController.sendMail("starmywatch@gmail.com",
-    payload.email, subject, message);
+    req.body.email, subject, message);
 };
 
 
