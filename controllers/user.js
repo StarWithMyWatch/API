@@ -199,37 +199,37 @@ exports.createConcours = (req, res, next) => {
 // by with many ==> take a points 5 || j'attends le découdage du token
 //le cahmp de code est vide donc on va ajouter un code||ok
 exports.updatePointWhenBuy = (req, res, next) => {
-    let token = req.header('Authorization').split(" ")[1];
-    let payload = jwt.decode(token, {
-        json: true
-    });
-    console.log("token", token);
-    console.log("userId", payload.userId);
-    console.log("email", payload.email);
+    /*  let token = req.header('Authorization').split(" ")[1];
+     let payload = jwt.decode(token, {
+       json: true
+     });
+     console.log("token", token);
+     console.log("userId", payload.userId);
+     console.log("email", payload.email); */
     const subject = "Votre Code d'achat";
-    const message = "vous trouvrez ci-dessous un code à partager à fin de ganer des points ....." + "SW" + payload.email + "MW";
-
+    const message = "vous trouvrez ci-dessous un code à partager à fin de ganer des points ....." + "SW" + req.body.email + "MW";
+    console.log("req.body.codeP", req.body.codeP.code);
     //Achat sans code
     if (req.body.codeP.code === "") {
 
         User.updateOne({
-            _id: payload.userId // id de celui qui a achté la montre
+            email: req.body.email // id de celui qui a achté la montre
         }, {
             $inc: {
                 "points": 5
             },
             $set: {
-                "codeP": "SW" + payload.email + "MW" // lui donner un code "req.body._id replace with mail"
+                "codeP": "SW" + req.body.email + "MW" // lui donner un code "req.body._id replace with mail"
             }
         }).then(result => {
             if (result.nModified > 0) {
                 res.status(200).json({
-                    message: "Update successful!",
+                    message: "Update successful! sans code",
                     result: result
                 });
             } else {
                 res.status(401).json({
-                    message: "Not authorized!"
+                    message: "Not authorized sans code!"
                 });
             }
         });
@@ -237,9 +237,9 @@ exports.updatePointWhenBuy = (req, res, next) => {
         console.log("req.body.email ", req.body.emailOneMen);
         console.log("req.body.email ", req.body.idMenOne);
 
-        //send mail with code
+        //send mail sans code
         MailController.sendMail("starmywatch@gmail.com",
-            payload.email, subject, message);
+            req.body.email, subject, message);
 
     }
 
@@ -254,7 +254,7 @@ exports.updatePointWhenBuy = (req, res, next) => {
         }).then(result => {
             if (result.nModified <= 5) {
                 res.status(200).json({
-                    message: "Update successful avec code!",
+                    message: "Update successful j'ai ganger des points grace au code!",
                     result: result,
                     code: "code est bon "
                 });
@@ -267,25 +267,25 @@ exports.updatePointWhenBuy = (req, res, next) => {
         });
         //send mail with code
         MailController.sendMail("starmywatch@gmail.com",
-            payload.email, subject, message);
+            req.body.email, subject, message);
 
         // update second user qui a utiliser le code du parain
         User.updateOne({
-            _id: payload.userId, // id de l'utilisateur qui vient d'achter la montre avec un code
+            email: req.body.email, // id de l'utilisateur qui vient d'achter la montre avec un code
         }, {
             $inc: {
                 "points": 5
             },
             $set: {
                 "codeP": {
-                    "code": "SW" + payload.email + "MW",
+                    "code": "SW" + req.body.email + "MW",
                     "nbInvitation": 0
                 } // req.body._id replace with mail dans le token
             }
         }).then(result => {
             if (result.nModified > 0) {
                 res.status(200).json({
-                    message: "Update successful!",
+                    message: "Update successful j'ai achter une montre!",
                     result: result
                 });
             } else {
@@ -300,8 +300,10 @@ exports.updatePointWhenBuy = (req, res, next) => {
 
 
 };
+
 exports.updateUserPointAfeterSelectStar = (req, res, next) => {
-    Concours.findOne({startDate: new Date(date.getFullYear(), date.getMonth(), 1)})
+    var date = new Date();
+    Concours.findOne({startDate: date.getMonth()})
         .then(concours => {
             if (!concours) {
                 return res.status(401).json({
@@ -397,8 +399,9 @@ exports.updateUserPointAfeterSelectStar = (req, res, next) => {
 
 exports.createConcours = (req, res, next) => {
     //const url = req.protocol + "://" + req.get("host");
+    var date = new Date();
     const concours = new Concours({
-        startDate: Date.now(),
+        startDate: date.getMonth(),
         estFini: false
     });
     concours.save()
