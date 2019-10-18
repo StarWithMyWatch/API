@@ -333,25 +333,25 @@ exports.updateUserPointAfeterSelectStar = (req, res, next) => {
                     req.body.emailMenTwo, subject, message);
 
                 User.updateOne({
-                    _id: req.body.emailMenOne // Men n°1
+                    email: req.body.emailMenOne // Men n°1
                 }, {
                     $inc: {
                         "points": 5
                     }
                 }).then(User.updateOne({
-                    _id: req.body.emailMenTwo // Men n°2
+                    email: req.body.emailMenTwo // Men n°2
                 }, {
                     $inc: {
                         "points": 5
                     }
                 })).then(User.updateOne({
-                    _id: req.body.emailWomenOne // Women n°1
+                    email: req.body.emailWomenOne // Women n°1
                 }, {
                     $inc: {
                         "points": 5
                     }
                 })).then(User.updateOne({
-                    _id: req.body.emailWomenTwo // Women n°2
+                    email: req.body.emailWomenTwo // Women n°2
                 }, {
                     $inc: {
                         "points": 5
