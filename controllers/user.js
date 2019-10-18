@@ -35,11 +35,9 @@ exports.createUser = (req, res, next) => {
             res.status(500).json({
               message: "Internal error during user creation!"
             });
-
           }); */
     });
 }
-
 
 exports.userLogin = (req, res, next) => {
     let fetchedUser;
@@ -88,25 +86,25 @@ exports.getUsers = (req, res, next) => {
             message: "users fetched successfully!",
             users: users
         });
-      });
-    };
+    });
+};
 
 exports.getUserById = (req, res, next) => {
-  User.findById(req.params.id)
-    .then(user => {
-      if (user) {
-        res.status(200).json(user);
-      } else {
-        res.status(404).json({
-          message: "user not found!"
+    User.findById(req.params.id)
+        .then(user => {
+            if (user) {
+                res.status(200).json(user);
+            } else {
+                res.status(404).json({
+                    message: "user not found!"
+                });
+            }
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Fetching user failed!"
+            });
         });
-      }
-    })
-    .catch(error => {
-      res.status(500).json({
-        message: "Fetching user failed!"
-      });
-    });
 };
 
 exports.getFemmes = (req, res, next) => {
@@ -156,14 +154,14 @@ exports.getHommes = (req, res, next) => {
 };
 
 exports.setImageToUser = (req, res, next) => {
-        User.updateOne(
-            {_id: req.body.id},
-            {
-              $set: {
-                "photo" : BASEAPPURL + req.file.path,
-              }
-            }).then(user => {
-          res.send({
+    User.updateOne(
+        {_id: req.body.id},
+        {
+            $set: {
+                "photo": BASEAPPURL + req.file.path,
+            }
+        }).then(user => {
+        res.send({
             user: user,
             error: null
         });
@@ -208,10 +206,11 @@ exports.updatePointWhenBuy = (req, res, next) => {
     console.log("token", token);
     console.log("userId", payload.userId);
     console.log("email", payload.email);
-
+    const subject = "Votre Code d'achat";
+    const message = "vous trouvrez ci-dessous un code à partager à fin de ganer des points ....." + "SW" + payload.email + "MW";
 
     //Achat sans code
-    if (!req.body.codeP) {
+    if (req.body.codeP.code === "") {
 
         User.updateOne({
             _id: payload.userId // id de celui qui a achté la montre
@@ -235,7 +234,16 @@ exports.updatePointWhenBuy = (req, res, next) => {
             }
         });
 
-    } //Achat avec code
+        console.log("req.body.email ", req.body.emailOneMen);
+        console.log("req.body.email ", req.body.idMenOne);
+
+        //send mail with code
+        MailController.sendMail("starmywatch@gmail.com",
+            payload.email, subject, message);
+
+    }
+
+    //Achat avec code
     else {
         User.updateOne({
             codeP: req.body.codeP, //utilisation de code
@@ -244,17 +252,22 @@ exports.updatePointWhenBuy = (req, res, next) => {
                 "points": 10
             }
         }).then(result => {
-            if (result.nModified > 0) {
+            if (result.nModified <= 5) {
                 res.status(200).json({
-                    message: "Update successful!",
-                    result: result
+                    message: "Update successful avec code!",
+                    result: result,
+                    code: "code est bon "
                 });
             } else {
-                res.status(401).json({
-                    message: "Not authorized!"
+                res.status(200).json({
+                    message: "Not authorized!",
+                    code: "code est expiré"
                 });
             }
         });
+        //send mail with code
+        MailController.sendMail("starmywatch@gmail.com",
+            payload.email, subject, message);
 
         // update second user qui a utiliser le code du parain
         User.updateOne({
@@ -287,213 +300,155 @@ exports.updatePointWhenBuy = (req, res, next) => {
 
 
 };
-
-
-
-// update star user
 exports.updateUserPointAfeterSelectStar = (req, res, next) => {
-    //for id 1
+    Concours.findOne({startDate: new Date(date.getFullYear(), date.getMonth(), 1)})
+        .then(concours => {
+            if (!concours) {
+                return res.status(401).json({
+                    message: "No concours found"
+                });
+            }
+            if (concours.startDate.getMonth() === now.getMonth() && concours.estFini === false) {
 
-    /*  db.scores.findOneAndUpdate(
-       { "name" : "R. Stiles" },
-       { $inc: { "points" : 5 } }
-    ) */
-    const subject = "Concours photo";
-    const message = "vous êtes sélectionnés pour participer à la réalisation de nos spots publicitaires "
-    console.log("req.body.email ", req.body.emailOneMen);
-    console.log("req.body.email ", req.body.idMenOne);
 
-    //send mail to menOne
-    MailController.sendMail("starmywatch@gmail.com",
-        req.body.emailOneMen, subject, message);
-    //send mail to OneWomen
-    MailController.sendMail("starmywatch@gmail.com",
-        req.body.emailOneWomen, subject, message);
-    //send mail to towWomen
-    MailController.sendMail("starmywatch@gmail.com",
-        req.body.emailTowWomen, subject, message);
-    //send mail to menTow,
-    MailController.sendMail("starmywatch@gmail.com",
-        req.body.emailTowMen, subject, message);
+
+                const subject = "Concours photo";
+                const message = "vous êtes sélectionnés pour participer à la réalisation de un spot publicitaires le 20/01/2019" +
+                    "Vous êtes le STAR de ces 2 mois." +
+                    "Vivez une expérience innobliable avec AUGARDE "
+                console.log("req.body.email ", req.body.emailOneMen);
+                console.log("req.body.email ", req.body.idMenOne);
+
+                //send mail to menOne
+                MailController.sendMail("starmywatch@gmail.com",
+                    req.body.emailMenOne, subject, message);
+                //send mail to OneWomen
+                MailController.sendMail("starmywatch@gmail.com",
+                    req.body.emailWomenOne, subject, message);
+                //send mail to towWomen
+                MailController.sendMail("starmywatch@gmail.com",
+                    req.body.emailWomenTwo, subject, message);
+                //send mail to menTow,
+                MailController.sendMail("starmywatch@gmail.com",
+                    req.body.emailMenTwo, subject, message);
+
+                User.updateOne({
+                    _id: req.body.emailMenOne // Men n°1
+                }, {
+                    $inc: {
+                        "points": 5
+                    }
+                }).then(User.updateOne({
+                    _id: req.body.emailMenTwo // Men n°2
+                }, {
+                    $inc: {
+                        "points": 5
+                    }
+                })).then(User.updateOne({
+                    _id: req.body.emailWomenOne // Women n°1
+                }, {
+                    $inc: {
+                        "points": 5
+                    }
+                })).then(User.updateOne({
+                    _id: req.body.emailWomenTwo // Women n°2
+                }, {
+                    $inc: {
+                        "points": 5
+                    }
+                })).then(Concours.updateOne({ sort: { 'created_at' : -1 } }, {
+                        $set: {
+                            "estFini": true
+                        }
+                    })
+                ).then(result => {
+                    if (result.nModified > 0) {
+                        res.status(200).json({
+                            message: "Update successful!",
+                            result: result
+                        });
+                    } else {
+                        return res.status(401).json({
+                            message: "Not authorized!"
+                        });
+                    }
+                    return res.status(201).json({
+                        message: "Vos choix ont été soumis, les gagnants seront notifiés par e-mail !"
+                    });
+                }).catch(error => {
+                    return res.status(500).json({
+                        message: "Internal error updating user"
+                    });
+                });
+            } else {
+                return res.status(200).json({
+                    message: "Le concours pour ce mois-ci est fini !"
+                })
+            }
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "Soumission des résultats échouée"
+            });
+        });
+};
+
+
+
+exports.createConcours = (req, res, next) => {
+    //const url = req.protocol + "://" + req.get("host");
+    const concours = new Concours({
+        startDate: Date.now(),
+        estFini: false
+    });
+    concours.save()
+        .then(createdConcours => {
+            res.status(201).json({
+                message: "Concours added successfully",
+                post: {
+                    ...createdConcours,
+                    id: createdConcours._id
+                }
+            });
+        });
+    /* .catch(error => {
+      res.status(500).json({
+        message: "Creating a montre failed!"
+      });
+    }); */
+};
+
+//*******/ by with Points ==> -100pts*********//
+exports.updatePointWhenPoints = (req, res, next) => {
+    let token = req.header('Authorization').split(" ")[1];
+    let payload = jwt.decode(token, {
+        json: true
+    });
+    console.log("token", token);
+    console.log("userId", payload.userId);
+    console.log("email", payload.email);
+    const subject = "Votre Code d'achat";
+    const message = "vous trouvrez ci-dessous un code à partager à fin de ganer des points ....." + "SW" + payload.email + "MW";
 
     User.updateOne({
-        _id: req.body.idMenOne // id de celui qui a achté la montre
+        _id: payload.userId // id de celui qui a achté la montre
     }, {
         $inc: {
-            "points": 5
+            "points": -100
         }
     }).then(result => {
         if (result.nModified > 0) {
             res.status(200).json({
-                message: "Update successful!",
+                message: "paie successful -100",
                 result: result
             });
         } else {
             res.status(401).json({
-                message: "Not authorized!"
+                message: "Not authorized sans code!"
             });
         }
-    })
+    });
+    //send mail with code
+    MailController.sendMail("starmywatch@gmail.com",
+        payload.email, subject, message);
 };
-/*  //for  id 2
- User.updateOne({
-   _id: req.body.idMenTwo // id de celui qui a achté la montre
- }, {
-   $inc: {
-     "points": 5
-   }
- }).then(result => {
-   if (result.nModified > 0) {
-     res.status(200).json({
-       message: "Update successful!",
-       result: result
-     });
-   } else {
-     res.status(401).json({
-       message: "Not authorized!"
-     });
-   }
- });
-
- //for  id 3
- User.updateOne({
-   _id: req.body.idWomenOne// id de celui qui a achté la montre
- }, {
-   $inc: {
-     "points": 5
-   }
- }).then(result => {
-   if (result.nModified > 0) {
-     res.status(200).json({
-       message: "Update successful!",
-       result: result
-     });
-   } else {
-     res.status(401).json({
-       message: "Not authorized!"
-     });
-   }
- });
- //for  id 4
- User.updateOne({
-   _id: req.body.idWomenTow // id de celui qui a achté la montre
- }, {
-   $inc: {
-     "points": 5
-   }
- }).then(result => {
-   if (result.nModified > 0) {
-     res.status(200).json({
-       message: "Update successful!",
-       result: result
-     });
-   } else {
-     res.status(401).json({
-       message: "Not authorized!"
-     });
-   }
- });
-*/
-
-
-
-
-
-/* MailController.sendMail("starmywatch@gmail.com",
-req.body.dest, req.body.subject, req.body.message); */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* console.log("req",req);
-  User.findById("5da8512a02430213208eb2e6")
-    .then(user => {
-      if (user) {
-        res.status(200).json(user);
-        //console.log("oneUser",user);
-      } else {
-        res.status(404).json({
-          message: "user not found!"
-        });
-      }
-    })
-    .catch(error => {
-      res.status(500).json({
-        message: "Fetching user failed!"
-      });
-    }); */
-/*   const user = {
-    _id: req.body._id,
-    email: req.body.email,
-    password: req.body.password,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    type: req.body.type,
-    sex: req.body.sex,
-    points: req.body.points,
-    photo: req.body.photo,
-    codeP: req.body.codeP,
-  }; */
-
-
-
-//get 10 point thanks to the code user
-/* exports.updatePointByCode = (req, res, next) => {
-
-  // update first user qui a fait le paraignage
-  User.updateOne({
-    codeP: req.body.codeP,
-  }, {
-    $inc: {
-      "points": 10
-    }
-  }).then(result => {
-    if (result.nModified > 0) {
-      res.status(200).json({
-        message: "Update successful!",
-        result: result
-      });
-    } else {
-      res.status(401).json({
-        message: "Not authorized!"
-      });
-    }
-  });
-
-  // update second user qui a utiliser le code du parain
-  User.updateOne({
-    _id: req.body._id,
-  }, {
-    $inc: {
-      "points": 5
-    },
-    $set: {
-      "codeP": "SW" + req.body._id + "MW" // req.body._id replace with mail dans le token
-    }
-  }).then(result => {
-    if (result.nModified > 0) {
-      res.status(200).json({
-        message: "Update successful!",
-        result: result
-      });
-    } else {
-      res.status(401).json({
-        message: "Not authorized!"
-      });
-    }
-  });
-
-};
- */

@@ -7,6 +7,7 @@ const router = express.Router();
 // --- POST ---
 router.post("/signup", UserController.createUser);
 router.post("/login", UserController.userLogin);
+router.post("/createconcours", UserController.createConcours)
 
 // --- GET ----
 router.get("", UserController.getUsers);
@@ -19,6 +20,7 @@ router.put("/imageSet", extractFile, UserController.setImageToUser);
 
 //paiment avec l'argent {avec code et sans code}
 router.put("/paidWithMany", UserController.updatePointWhenBuy);
+router.put("/paidWithPoints", UserController.updatePointWhenPoints);
 router.put("/star", UserController.updateUserPointAfeterSelectStar);
 
 module.exports = router;
