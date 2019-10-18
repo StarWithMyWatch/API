@@ -303,6 +303,7 @@ exports.updatePointWhenBuy = (req, res, next) => {
 
 exports.updateUserPointAfeterSelectStar = (req, res, next) => {
     var date = new Date();
+    var concours = Concours.findOne({startDate: date.getMonth()})
     Concours.findOne({startDate: date.getMonth()})
         .then(concours => {
             if (!concours) {
@@ -310,16 +311,15 @@ exports.updateUserPointAfeterSelectStar = (req, res, next) => {
                     message: "No concours found"
                 });
             }
-            if (concours.startDate.getMonth() === now.getMonth() && concours.estFini === false) {
+            console.log("oizhfi")
+            if (concours.startDate === date.getMonth() && concours.estFini === false) {
 
-
+                console.log("dertfyguhijok")
 
                 const subject = "Concours photo";
                 const message = "vous êtes sélectionnés pour participer à la réalisation de un spot publicitaires le 20/01/2019" +
                     "Vous êtes le STAR de ces 2 mois." +
                     "Vivez une expérience innobliable avec AUGARDE "
-                console.log("req.body.email ", req.body.emailOneMen);
-                console.log("req.body.email ", req.body.idMenOne);
 
                 //send mail to menOne
                 MailController.sendMail("starmywatch@gmail.com",
@@ -333,6 +333,8 @@ exports.updateUserPointAfeterSelectStar = (req, res, next) => {
                 //send mail to menTow,
                 MailController.sendMail("starmywatch@gmail.com",
                     req.body.emailMenTwo, subject, message);
+
+                console.log("dsèufteuqiofjq")
 
                 User.updateOne({
                     email: req.body.emailMenOne // Men n°1
@@ -358,25 +360,26 @@ exports.updateUserPointAfeterSelectStar = (req, res, next) => {
                     $inc: {
                         "points": 5
                     }
-                })).then(Concours.updateOne({ sort: { 'created_at' : -1 } }, {
-                        $set: {
-                            "estFini": true
-                        }
-                    })
+                })).then(
+                    concours.$set("estFini", true).save()
+
+                    /*Concours.updateOne().sort({ startDate: -1 },
+                        {
+                            $set: {
+                                "estFini": true
+                            }
+                        }).limit(1)*/
                 ).then(result => {
                     if (result.nModified > 0) {
-                        res.status(200).json({
-                            message: "Update successful!",
-                            result: result
+                        return res.status(201).json({
+                            message: "Vos choix ont été soumis, les gagnants seront notifiés par e-mail !"
                         });
                     } else {
                         return res.status(401).json({
                             message: "Not authorized!"
                         });
                     }
-                    return res.status(201).json({
-                        message: "Vos choix ont été soumis, les gagnants seront notifiés par e-mail !"
-                    });
+
                 }).catch(error => {
                     return res.status(500).json({
                         message: "Internal error updating user"
